@@ -1,4 +1,4 @@
-from langchain_ollama import OllamaLLM
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
 template = (
@@ -10,12 +10,14 @@ template = (
     "4. **Direct Data Only:** Your output should contain only the data that is explicitly requested, with no other text."
 )
 
-model = OllamaLLM(model="llama3")
+model = "gpt-3.5-turbo"
 
 
-def parse_with_ollama(dom_chunks, parse_description):
+def parse_with_gpt(dom_chunks, parse_description):
     prompt = ChatPromptTemplate.from_template(template)
     chain = prompt | model
+
+    chat = ChatOpenAI(model_name=model_name, temperature=0)
 
     parsed_results = []
 
