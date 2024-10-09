@@ -1,5 +1,8 @@
 from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import OpenAI
+from langchain_core.prompts import ChatPromptTemplate 
+import os
+from dotenv import load_dotenv
 
 template = (
     "You are tasked with extracting specific information from the following text content: {dom_content}. "
@@ -10,15 +13,20 @@ template = (
     "4. **Direct Data Only:** Your output should contain only the data that is explicitly requested, with no other text."
 )
 
-model = "gpt-3.5-turbo"
+# load .env file so that OPENAI_API_KEY key can be accessed
 
+load_dotenv() 
+
+#initiate OpenAI LLM, we can pass parameters like model name etc
+llm = OpenAI(
+        api_key=os.environ.get("OPENAI_API_KEY"),
+    ) 
 
 def parse_with_gpt(dom_chunks, parse_description):
+    
     prompt = ChatPromptTemplate.from_template(template)
-    chain = prompt | model
-
-    chat = ChatOpenAI(model_name=model_name, temperature=0)
-
+    chain = prompt | llm
+    
     parsed_results = []
 
     for i, chunk in enumerate(dom_chunks, start=1):
@@ -29,3 +37,4 @@ def parse_with_gpt(dom_chunks, parse_description):
         parsed_results.append(response)
 
     return "\n".join(parsed_results)
+ 
